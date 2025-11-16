@@ -37,8 +37,8 @@ If the USB device is attached, it can be mounted with the =mount= command. The f
 
 * Prepare
 
-** Kill gpg-agent
-Kill eventually running gpg-agents:
+** Stop gpg-agent
+Stop eventually running gpg-agents:
 #+begin_src shell
   gpgconf --kill gpg-agent
 #+end_src
@@ -159,4 +159,27 @@ should result to something like:
 The execution of the following command should not produce any output:
 #+begin_src shell :var LANG="en"
   gpg --homedir ~/.gnupg -K | grep -e 'sec '
+#+end_src
+
+* Cleanup
+After finishing, some cleanup needs to be done.
+
+1. Stop the gpg-agents for the temporary GnuPG home directory:
+   #+begin_src shell :session manage-pgphome
+     gpgconf --kill gpg-agent
+   #+end_src
+
+2. Delete the temporary GnuPG home directory:
+   #+begin_src shell :session manage-pgphome
+     rm -rf $GNUPGHOME
+   #+end_src
+
+3. Unset =$GNUPGHOME=:
+   #+begin_src shell :session manage-pgphome
+     unset GNUPGHOME
+   #+end_src
+
+* TODO Unmount Linux
+#+begin_src shell
+  udisctl unmount -b /dev/sda1
 #+end_src
