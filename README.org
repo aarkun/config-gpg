@@ -96,3 +96,21 @@ This should result to something like:
 : uid           [ultimate] John Doe (Dummy ID) <j.d@mai.le>
 : ssb   cv25519 2025-11-16 [E] [expires: 2026-11-16]
 : ssb   ed25519 2025-11-16 [S] [expires: 2026-11-16]
+
+* Create backup
+To create a backup of the keys. The backups are stored in tar archives starting with =gnupg.0.tar=. The next backup has then :
+
+1. Stop the gpg-agent
+   #+begin_src shell :session manage-pgphome
+     gpgconf --kill gpg-agent
+   #+end_src
+
+2. Remove old lock files
+   #+begin_src shell :session manage-pgphome
+     rm -f $GNUPGHOME/.#lk0x*
+   #+end_src
+
+3. Create a new tar archive of the temporary GnuPG home directory with an incremented number
+   #+begin_src shell
+     tar cf gnupg.$(find -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
+   #+end_src
