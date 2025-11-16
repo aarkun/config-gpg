@@ -34,3 +34,35 @@ If the USB device is attached, it can be mounted with the =mount= command. The f
 #+begin_example shell :dir /sudo::
   mount -t drvfs -o uid=$(id -u $USER),gid=$(id -g $USER) d: /media/
 #+end_example
+
+* Prepare
+
+** Kill gpg-agent
+Kill eventually running gpg-agents:
+#+begin_src shell
+  gpgconf --kill gpg-agent
+#+end_src
+
+** Create temporary backup
+Make a temporary backup of the current ~$HOME/.gnupg~ if something goes wrong:
+#+begin_src shell
+  cp -r ~/.gnupg ~/gnupg.bak
+#+end_src
+
+** Create a temporary GnuPG home directory
+Create a temporary GnuPG home directory in the current working directory.
+
+1. Set GnuPG homedir to the temporary directory. The variable ~$GNUPGHOME~ is set to the current working directory. It needs to be exported, otherwise it is not respected in the following commands:
+   #+begin_src shell :session manage-pgphome
+     export GNUPGHOME=$PWD/gnupg-wd
+   #+end_src
+
+2. Create the directory:
+   #+begin_src shell :session manage-pgphome
+     mkdir -p $GNUPGHOME
+   #+end_src
+
+3. Change permissions for directory:
+   #+begin_src shell :session manage-pgphome
+     chmod 0700 $GNUPGHOME
+   #+end_src
