@@ -179,6 +179,19 @@ After finishing, some cleanup needs to be done.
      unset GNUPGHOME
    #+end_src
 
+** Remove temporary backup
+Temporary backup might be removed:
+#+begin_src shell
+  rm -rf ~/gnupg.bak
+#+end_src
+
+* Sync in WSL
+Within WSL the newly created gpg keys might be shared to the usual user environment within Windows:
+#+begin_src shell
+  rm -rf /mnt/c/Users/$USER/.gnupg
+  cp -r ~/.gnupg /mnt/c/Users/$USER/
+#+end_src
+
 * Unmount USB
 After that the device is accessible at =/media/$USER/=.
 Depending on the method for mounting, the USB device needs to be unmounted.
