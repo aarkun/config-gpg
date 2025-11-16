@@ -66,3 +66,33 @@ Create a temporary GnuPG home directory in the current working directory.
    #+begin_src shell :session manage-pgphome
      chmod 0700 $GNUPGHOME
    #+end_src
+
+* Basic setup
+
+** Create a new primary key pair
+Creating a new primary keypair should be done interactively, at least for setting a password. The following procedure is based on [[https://keyring.debian.org/creating-key.html][Creating a new GPG key]], but  uses the full key generation to set algorithms and expiration date interactively. The fingerprint of the key is stored in the variable ~$gnupg_fpr~ for later use, which only works, if an expiration date is set:
+#+begin_example shell
+  gnupg_fpr=$(gpg --full-gen-key | grep -A1 -e '^pub' | tr -d '\n' | tr -s ' ' | cut -d ' ' -f 7)
+#+end_example
+
+*Note*: It is assumed, that the keys are be valid for one year.
+
+** Add a subkey for signing
+Like described at https://wiki.debian.org/Subkeys, a subkey for signing with the default algorithm is added. This key should be valid for one year as well:
+#+begin_example shell
+  gpg --quick-add-key $gnupg_fpr default sign 1y
+#+end_example
+
+** Verify
+To verify the basic setup. list the public keys:
+#+begin_src shell :session manage-pgphome :results verbatim :var LANG="en"
+  gpg -K
+#+end_src
+
+This should result to something like:
+: ------------------------------------------------
+: sec   ed25519 2025-11-16 [SC] [expires: 2026-11-16]
+:       1AD50F30FFFB994233881FA61B41057B207BCE90
+: uid           [ultimate] John Doe (Dummy ID) <j.d@mai.le>
+: ssb   cv25519 2025-11-16 [E] [expires: 2026-11-16]
+: ssb   ed25519 2025-11-16 [S] [expires: 2026-11-16]
