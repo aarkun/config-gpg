@@ -18,3 +18,19 @@ The basic setup is based on https://wiki.debian.org/Subkeys, which will create o
 
 With =README.org= is this file and =gnupg.<x>.tar= are backups, with =gnupg.0.tar= the first and =gnupg.N.tar= the most current.
 
+* Mount USB
+To work with the primary signing keys, the media, on which they are stored, needs to be mounted.
+
+** Mount USB device on Linux
+There are several ways to mount USB media on Linux. One is to use =udisksctl= which is provided by [[https://packages.debian.org/de/trixie/udisks2][udisks2]]:
+#+begin_example shell
+  udisksctl mount -b /dev/<device>
+#+end_example
+
+After that the device is accessible at =/media/$USER/=.
+
+** Mount USB device within WSL
+If the USB device is attached, it can be mounted with the =mount= command. The following example mounts a USB device, which is assigned to the device /D:/ to =/media/=:
+#+begin_example shell :dir /sudo::
+  mount -t drvfs -o uid=$(id -u $USER),gid=$(id -g $USER) d: /media/
+#+end_example
