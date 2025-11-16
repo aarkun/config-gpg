@@ -114,3 +114,49 @@ To create a backup of the keys. The backups are stored in tar archives starting 
    #+begin_src shell
      tar cf gnupg.$(find -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
    #+end_src
+
+* Restore from Backup
+All archived files should be copied from current backup to default GnuPG homedir =$HOME/.gnupg=, without private sign key.
+
+1. Create a temporary directory to extract the files to:
+   #+begin_src shell :session manage-pgphome
+     mkdir -p $PWD/gnupg-tmp
+   #+end_src
+
+2. Determine the fingerprints of the primary private keys. Extract all files from the current archive, without the primary private keys:
+   #+begin_src shell :session manage-pgphome
+     gnupg_kg=$(gpg -K --with-keygrip \
+     	       | grep -A2 -e 'sec' \
+     	       | grep -e 'Keygrip = ' \
+     	       | cut -d '=' -f2 \
+     	       | tr -d ' ')
+     tar -C $PWD/gnupg-tmp --exclude=private-keys-v1.d/$gnupg_kg.key \
+         -xf gnupg.$(($(find -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
+     unset gnupg_kg
+   #+end_src
+
+3. Make the extracted files the new target GnuPG homedir =$HOME/.gnupg=:
+   #+begin_src shell :session manage-pgphome
+     mv $PWD/gnupg-tmp/gnupg-wd ~/.gnupg
+   #+end_src
+
+4. Remove temporary directory:
+   #+begin_src shell :session manage-pgphome
+     rmdir $PWD/gnupg-tmp
+   #+end_src
+
+** Verify
+To verify, check the public keys for not having a private key. Their entries should start with =sec#=.
+
+The execution of:
+#+begin_src shell :results replace verbatim :var LANG="en"
+  gpg --homedir ~/.gnupg -K | grep -e 'sec#'
+#+end_src
+
+should result to something like:
+: sec#  ed25519 2025-11-16 [SC] [expires: 2026-11-16]
+
+The execution of the following command should not produce any output:
+#+begin_src shell :var LANG="en"
+  gpg --homedir ~/.gnupg -K | grep -e 'sec '
+#+end_src
