@@ -179,7 +179,18 @@ After finishing, some cleanup needs to be done.
      unset GNUPGHOME
    #+end_src
 
-* TODO Unmount Linux
-#+begin_src shell
-  udisctl unmount -b /dev/sda1
+* Unmount USB
+After that the device is accessible at =/media/$USER/=.
+Depending on the method for mounting, the USB device needs to be unmounted.
+
+** Unmount USB device on Linux
+If the device was mounted with =udisksctl=, it can be unmounted with:
+#+begin_example shell
+  udisksctl unmount -b /dev/<device>
+#+end_example
+
+** Unmount USB device within WSL
+In WSL the device can be unmounted with:
+#+begin_src shell :dir /sudo:: :results silent
+  umount /media
 #+end_src
