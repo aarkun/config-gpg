@@ -7,7 +7,7 @@
 Description and examples to set up [[https://www.gnupg.org/][The GNU Privacy Gurad]] key management-
 
 * Overview
-The basic setup is based on https://wiki.debian.org/Subkeys, which will create one primary signing key pair, which should never be stored on the machine. Instead, subkeys are used for the daily work like encrypting or signing messages. The primary key pair is stored on a portable media, like an USB disk and only mounted and used, when needed. The backups of the current key setup together with their primary keys are stored on the media as well. The file structure of the media should look like something like:
+The basic setup is based on https://wiki.debian.org/Subkeys. This will create one primary signing key pair, which should never be stored on the machine. Instead, subkeys are used for the daily work like encrypting or signing messages. The primary key pair is stored on a portable media, like an USB disk and only mounted and used, when needed. The backups of the current key setup together with their primary keys are stored on the media as well. The file structure of the media should look like something like:
 #+begin_example
   +-README.org
   +-bak/
@@ -17,7 +17,7 @@ The basic setup is based on https://wiki.debian.org/Subkeys, which will create o
     +-gnupg.N.tar
 #+end_example
 
-With =README.org= is this file the files =gnupg.<x>.tar= are backups, with =gnupg.0.tar= the first and =gnupg.N.tar= the most current.
+The file =README.org= is this file. The files =gnupg.<x>.tar= are backups, with =gnupg.0.tar= the first and =gnupg.N.tar= the most current.
 
 * Mount USB
 To work with the primary signing keys, the media, on which they are stored, needs to be mounted.
@@ -37,6 +37,7 @@ If the USB device is attached, it can be mounted with the =mount= command. The f
 #+end_example
 
 * Prepare
+To create the setup or manage keys, some preparation has to be done.
 
 ** Stop gpg-agent
 Stop eventually running gpg-agents:
@@ -68,7 +69,8 @@ Create a temporary GnuPG home directory in the current working directory.
      chmod 0700 $GNUPGHOME
    #+end_src
 
-* Basic setup
+* Create an initial setup
+The initial setup has to be done once.
 
 ** Create a new primary key pair
 Creating a new primary keypair should be done interactively, at least for setting a password. The following procedure is based on [[https://keyring.debian.org/creating-key.html][Creating a new GPG key]], but  uses the full key generation to set algorithms and expiration date interactively. The fingerprint of the key is stored in the variable ~$gnupg_fpr~ for later use, which only works, if an expiration date is set:
@@ -99,7 +101,7 @@ This should result to something like:
 : ssb   ed25519 2025-11-16 [S] [expires: 2026-11-16]
 
 * Manage keys
-Key management can be done in multiple ways. Since always a password should be set, it is not possible to do it fully automatically.
+After the initial setup, key management can be done in multiple ways. Since always a password should be set, it is not possible to do it fully automatically.
 
 * Create backup
 To create a backup of the keys. The backups are stored in tar archives starting with =gnupg.0.tar=. The next backup has then :
@@ -119,8 +121,8 @@ To create a backup of the keys. The backups are stored in tar archives starting 
      tar cf bak/gnupg.$(find bak -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
    #+end_src
 
-* Restore from Backup
-All archived files should be copied from current backup to default GnuPG homedir =$HOME/.gnupg=, without private sign key.
+* Install from Backup
+The managed keys can then be installed from the current backup to default GnuPG homedir =$HOME/.gnupg=, without private sign key.
 
 1. Create a temporary directory to extract the files to:
    #+begin_src shell :session manage-pgphome
