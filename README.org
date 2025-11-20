@@ -48,7 +48,7 @@ Stop eventually running gpg-agents:
 ** Create temporary backup
 Make a temporary backup of the current ~$HOME/.gnupg~ if something goes wrong:
 #+begin_src shell
-  cp -r ~/.gnupg ~/gnupg.bak
+  mv ~/.gnupg ~/gnupg.bak
 #+end_src
 
 ** Create a temporary GnuPG home directory
@@ -121,6 +121,24 @@ To create a backup of the keys. The backups are stored in tar archives starting 
      tar cf bak/gnupg.$(find bak -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
    #+end_src
 
+* Cleanup
+After finishing, some cleanup needs to be done.
+
+1. Stop the gpg-agents for the temporary GnuPG home directory:
+   #+begin_src shell :session manage-pgphome
+     gpgconf --kill gpg-agent
+   #+end_src
+
+2. Delete the temporary GnuPG home directory:
+   #+begin_src shell :session manage-pgphome
+     rm -rf $GNUPGHOME
+   #+end_src
+
+3. Unset =$GNUPGHOME=:
+   #+begin_src shell :session manage-pgphome
+     unset GNUPGHOME
+   #+end_src
+
 * Install from Backup
 The managed keys can then be installed from the current backup to default GnuPG homedir =$HOME/.gnupg=, without private sign key.
 
@@ -165,35 +183,17 @@ The execution of the following command should not produce any output:
   gpg --homedir ~/.gnupg -K | grep -e 'sec '
 #+end_src
 
-* Cleanup
-After finishing, some cleanup needs to be done.
-
-1. Stop the gpg-agents for the temporary GnuPG home directory:
-   #+begin_src shell :session manage-pgphome
-     gpgconf --kill gpg-agent
-   #+end_src
-
-2. Delete the temporary GnuPG home directory:
-   #+begin_src shell :session manage-pgphome
-     rm -rf $GNUPGHOME
-   #+end_src
-
-3. Unset =$GNUPGHOME=:
-   #+begin_src shell :session manage-pgphome
-     unset GNUPGHOME
-   #+end_src
-
-** Remove temporary backup
-Temporary backup might be removed:
-#+begin_src shell
-  rm -rf ~/gnupg.bak
-#+end_src
-
 * Sync in WSL
 Within WSL the newly created gpg keys might be shared to the usual user environment within Windows:
 #+begin_src shell
   rm -rf /mnt/c/Users/$USER/.gnupg
   cp -r ~/.gnupg /mnt/c/Users/$USER/
+#+end_src
+
+* Remove temporary backup
+Temporary backup might be removed:
+#+begin_src shell
+  rm -rf ~/gnupg.bak
 #+end_src
 
 * Unmount USB
