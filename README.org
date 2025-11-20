@@ -98,6 +98,9 @@ This should result to something like:
 : ssb   cv25519 2025-11-16 [E] [expires: 2026-11-16]
 : ssb   ed25519 2025-11-16 [S] [expires: 2026-11-16]
 
+* Manage keys
+Key management can be done in multiple ways. Since always a password should be set, it is not possible to do it fully automatically.
+
 * Create backup
 To create a backup of the keys. The backups are stored in tar archives starting with =gnupg.0.tar=. The next backup has then :
 
