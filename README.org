@@ -10,13 +10,14 @@ Description and examples to set up [[https://www.gnupg.org/][The GNU Privacy Gur
 The basic setup is based on https://wiki.debian.org/Subkeys, which will create one primary signing key pair, which should never be stored on the machine. Instead, subkeys are used for the daily work like encrypting or signing messages. The primary key pair is stored on a portable media, like an USB disk and only mounted and used, when needed. The backups of the current key setup together with their primary keys are stored on the media as well. The file structure of the media should look like something like:
 #+begin_example
   +-README.org
-  +-gnupg.0.tar
-  +-gnupg.1.tar
+  +-bak/
+    |-gnupg.0.tar
+    |-gnupg.1.tar
   ...
-  +-gnupg.N.tar
+    +-gnupg.N.tar
 #+end_example
 
-With =README.org= is this file and =gnupg.<x>.tar= are backups, with =gnupg.0.tar= the first and =gnupg.N.tar= the most current.
+With =README.org= is this file the files =gnupg.<x>.tar= are backups, with =gnupg.0.tar= the first and =gnupg.N.tar= the most current.
 
 * Mount USB
 To work with the primary signing keys, the media, on which they are stored, needs to be mounted.
@@ -112,7 +113,7 @@ To create a backup of the keys. The backups are stored in tar archives starting 
 
 3. Create a new tar archive of the temporary GnuPG home directory with an incremented number
    #+begin_src shell
-     tar cf gnupg.$(find -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
+     tar cf bak/gnupg.$(find bak -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
    #+end_src
 
 * Restore from Backup
@@ -125,14 +126,12 @@ All archived files should be copied from current backup to default GnuPG homedir
 
 2. Determine the fingerprints of the primary private keys. Extract all files from the current archive, without the primary private keys:
    #+begin_src shell :session manage-pgphome
-     gnupg_kg=$(gpg -K --with-keygrip \
-     	       | grep -A2 -e 'sec' \
-     	       | grep -e 'Keygrip = ' \
-     	       | cut -d '=' -f2 \
-     	       | tr -d ' ')
-     tar -C $PWD/gnupg-tmp --exclude=private-keys-v1.d/$gnupg_kg.key \
-         -xf gnupg.$(($(find -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
-     unset gnupg_kg
+     gnupg_exclusions=$(gpg -K --with-keygrip \
+     	| grep -e '^sec ' -A 2 \
+     	| sed -nE 's/ *Keygrip = ([0-9A-F]+)/--exclude=private-keys-v1.d\/\1.key/p')
+     tar -C $PWD/gnupg-tmp $gnupg_exclusions \
+         -xf bak/gnupg.$(($(find bak -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
+     unset gnupg_exclusions
    #+end_src
 
 3. Make the extracted files the new target GnuPG homedir =$HOME/.gnupg=:
