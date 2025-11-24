@@ -214,6 +214,6 @@ If the device was mounted with =udisksctl=, it can be unmounted with:
 
 ** Unmount USB device within WSL
 In WSL the device can be unmounted with:
-#+begin_src shell :dir /sudo:: :results silent
-  umount /media
-#+end_src
+#+begin_example shell :results silent
+  sudo umount /media/$USER
+#+end_example
