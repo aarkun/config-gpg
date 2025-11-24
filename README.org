@@ -139,32 +139,38 @@ After finishing, some cleanup needs to be done.
      unset GNUPGHOME
    #+end_src
 
-* Install from Backup
+* Install from backup
 The managed keys can then be installed from the current backup to default GnuPG homedir =$HOME/.gnupg=, without private sign key.
 
-1. Create a temporary directory to extract the files to:
+1. Extract all files from backup into the temporary directory:
    #+begin_src shell :session manage-pgphome
-     mkdir -p $PWD/gnupg-tmp
+     tar -C $PWD \
+	 -xf bak/gnupg.$(($(find bak -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
    #+end_src
 
-2. Determine the fingerprints of the primary private keys. Extract all files from the current archive, without the primary private keys:
+2. Create a temporary directory to extract files to:
+   #+begin_src shell :session manage-pgphome
+     mkdir -p ~/gnupg-tmp
+   #+end_src
+
+3. Determine the fingerprints of the primary private keys. Extract all files from the current archive, without the primary private keys:
    #+begin_src shell :session manage-pgphome
      gnupg_exclusions=$(gpg -K --with-keygrip \
      	| grep -e '^sec ' -A 2 \
      	| sed -nE 's/ *Keygrip = ([0-9A-F]+)/--exclude=private-keys-v1.d\/\1.key/p')
-     tar -C $PWD/gnupg-tmp $gnupg_exclusions \
+     tar -C ~/gnupg-tmp $gnupg_exclusions \
          -xf bak/gnupg.$(($(find bak -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
      unset gnupg_exclusions
    #+end_src
 
-3. Make the extracted files the new target GnuPG homedir =$HOME/.gnupg=:
+4. Make the extracted files the new target GnuPG homedir =$HOME/.gnupg=:
    #+begin_src shell :session manage-pgphome
-     mv $PWD/gnupg-tmp/gnupg-wd ~/.gnupg
+     mv ~/gnupg-tmp/gnupg-wd ~/.gnupg
    #+end_src
 
-4. Remove temporary directory:
+5. Remove temporary directory:
    #+begin_src shell :session manage-pgphome
-     rmdir $PWD/gnupg-tmp
+     rmdir ~/gnupg-tmp
    #+end_src
 
 ** Verify
