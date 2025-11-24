@@ -56,17 +56,17 @@ Create a temporary GnuPG home directory in the current working directory.
 
 1. Set GnuPG homedir to the temporary directory. The variable ~$GNUPGHOME~ is set to the current working directory. It needs to be exported, otherwise it is not respected in the following commands:
    #+begin_src shell :session manage-pgphome
-     export GNUPGHOME=$PWD/gnupg-wd
+     export GNUPGHOME="$PWD/gnupg-wd"
    #+end_src
 
 2. Create the directory:
    #+begin_src shell :session manage-pgphome
-     mkdir -p $GNUPGHOME
+     mkdir -p "$GNUPGHOME"
    #+end_src
 
 3. Change permissions for directory:
    #+begin_src shell :session manage-pgphome
-     chmod 0700 $GNUPGHOME
+     chmod 0700 "$GNUPGHOME"
    #+end_src
 
 * Create an initial setup
@@ -113,12 +113,12 @@ To create a backup of the keys. The backups are stored in tar archives starting 
 
 2. Remove old lock files
    #+begin_src shell :session manage-pgphome
-     rm -f $GNUPGHOME/.#lk0x*
+     rm -f "$GNUPGHOME"/.#lk0x*
    #+end_src
 
 3. Create a new tar archive of the temporary GnuPG home directory with an incremented number
    #+begin_src shell
-     tar cf bak/gnupg.$(find bak -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
+     tar -cf bak/gnupg.$(find bak -maxdepth 1 -name '*.tar' | wc -l).tar gnupg-wd
    #+end_src
 
 * Cleanup
@@ -131,7 +131,7 @@ After finishing, some cleanup needs to be done.
 
 2. Delete the temporary GnuPG home directory:
    #+begin_src shell :session manage-pgphome
-     rm -rf $GNUPGHOME
+     rm -rf "$GNUPGHOME"
    #+end_src
 
 3. Unset =$GNUPGHOME=:
@@ -144,8 +144,7 @@ The managed keys can then be installed from the current backup to default GnuPG 
 
 1. Extract all files from backup into the temporary directory:
    #+begin_src shell :session manage-pgphome
-     tar -C $PWD \
-	 -xf bak/gnupg.$(($(find bak -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
+     tar -xf bak/gnupg.$(($(find bak -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
    #+end_src
 
 2. Create a temporary directory to extract files to:
