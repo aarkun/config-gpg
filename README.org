@@ -32,8 +32,8 @@ After that the device is accessible at =/media/$USER/=.
 
 ** Mount USB device within WSL
 If the USB device is attached, it can be mounted with the =mount= command. The following example mounts a USB device, which is assigned to the device /D:/ to =/media/=:
-#+begin_example shell :dir /sudo::
-  mount -t drvfs -o uid=$(id -u $USER),gid=$(id -g $USER) d: /media/
+#+begin_example shell
+  sudo mount -t drvfs -o uid=$(id -u $USER),gid=$(id -g $USER) d: /media/$USER
 #+end_example
 
 * Prepare
