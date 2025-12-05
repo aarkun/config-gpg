@@ -103,8 +103,13 @@ This should result to something like:
 * Manage keys
 After the initial setup, key management can be done in multiple ways. Since always a password should be set, it is not possible to do it fully automatically.
 
+To manage the keys, they usually have to be restored from a backup first.:
+#+begin_src shell :session manage-pgphome
+  tar -xf bak/gnupg.$(($(find bak -maxdepth 1 -name '*.tar' | wc -l) - 1)).tar
+#+end_src
+
 * Create backup
-To create a backup of the keys. The backups are stored in tar archives starting with =gnupg.0.tar=. The next backup has then :
+After managing the keys, a new backup of the keys must be created. The backups are stored in tar archives starting with =gnupg.0.tar=. The next backup has then :
 
 1. Stop the gpg-agent
    #+begin_src shell :session manage-pgphome
