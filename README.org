@@ -7,7 +7,7 @@
 Description and examples to set up [[https://www.gnupg.org/][The GNU Privacy Gurad]] key management.
 
 * Overview
-The basic setup is based on https://wiki.debian.org/Subkeys. This will create one primary signing key pair, which should never be stored on the machine. Instead, subkeys are used for the daily work like encrypting or signing messages. The primary key pair is stored on a portable media, like an USB disk and only mounted and used, when needed. The backups of the current key setup together with their primary keys are stored on the media as well. The file structure of the media should look like something like:
+The basic setup is based on https://wiki.debian.org/Subkeys. This will create one primary signing key pair, which should never be stored on the machine. For the daily work like encrypting or signing messages, subkeys are used. The primary key pair is stored on a portable media, like an USB disk and only mounted and used, when needed. The backups of the current key setup together with their primary keys are stored on the media as well. The file structure of the media should look like something like:
 #+begin_example
   +-README.org
   +-bak/
@@ -17,7 +17,7 @@ The basic setup is based on https://wiki.debian.org/Subkeys. This will create on
     +-gnupg.N.tar
 #+end_example
 
-The file =README.org= is this file. The files =gnupg.<x>.tar= are backups, with =gnupg.0.tar= the first and =gnupg.N.tar= the most current.
+The file =README.org= is this file. The files =gnupg.<x>.tar= are backups, where =gnupg.0.tar= is the first backup and =gnupg.N.tar= the most current one.
 
 * Mount USB
 To work with the primary signing keys, the media, on which they are stored, needs to be mounted.
